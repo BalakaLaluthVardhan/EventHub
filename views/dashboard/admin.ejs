@@ -1,0 +1,87 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center py-4">
+  <div class="col-12">
+    <div class="glass-panel p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <div>
+          <h2 class="fw-bold mb-1 text-glow"><i class="bi bi-shield-lock-fill text-primary me-2"></i>Admin Console</h2>
+          <p class="text-muted mb-0 small">System statistics, diagnostic summaries, and user records</p>
+        </div>
+        <a href="/events" class="btn btn-glow btn-glow-secondary"><i class="bi bi-arrow-left me-1"></i>View Event Board</a>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="row g-3 mb-5">
+        <div class="col-md-3">
+          <div class="glass-panel p-3 text-center border-primary bg-primary bg-opacity-10">
+            <span class="d-block fs-3 fw-bold text-glow text-primary"><%= totalUsers %></span>
+            <span class="text-muted small uppercase">Total Accounts</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-panel p-3 text-center border-info bg-info bg-opacity-10">
+            <span class="d-block fs-3 fw-bold text-glow text-info"><%= studentCount %></span>
+            <span class="text-muted small uppercase">Students</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-panel p-3 text-center border-warning bg-warning bg-opacity-10">
+            <span class="d-block fs-3 fw-bold text-glow" style="color: #a66a2e !important;"><%= organizerCount %></span>
+            <span class="text-muted small uppercase">Organizers</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-panel p-3 text-center border-success bg-success bg-opacity-10">
+            <span class="d-block fs-3 fw-bold text-glow text-success"><%= totalEvents %></span>
+            <span class="text-muted small uppercase">Total Events</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database User list -->
+      <h4 class="fw-bold text-glow mb-3"><i class="bi bi-person-lines-fill text-secondary me-2"></i>System Accounts Directory</h4>
+      <div class="table-responsive">
+        <table class="table table-glass table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Interests Setup</th>
+              <th>Registered At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr>
+                <td><strong class="text-white"><%= u.name %></strong></td>
+                <td class="text-muted"><%= u.email %></td>
+                <td>
+                  <% if (u.role === 'admin') { %>
+                    <span class="badge bg-danger bg-opacity-20 text-danger border border-danger">Admin</span>
+                  <% } else if (u.role === 'organizer') { %>
+                    <span class="badge bg-primary bg-opacity-20 text-primary border border-primary">Organizer</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary-glow text-muted border border-secondary">Student</span>
+                  <% } %>
+                </td>
+                <td class="text-muted small">
+                  <% if (u.interests && u.interests.length) { %>
+                    <%= u.interests.join(', ') %>
+                  <% } else { %>
+                    &mdash;
+                  <% } %>
+                </td>
+                <td class="text-muted small"><%= new Date(u.createdAt).toLocaleDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

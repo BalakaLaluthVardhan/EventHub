@@ -1,0 +1,54 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center py-4">
+  <div class="col-md-8 col-lg-6">
+    <div class="glass-panel p-5">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-accent-glow border border-cyan" style="width: 60px; height: 60px; border-color: var(--accent) !important;">
+          <i class="bi bi-gear-fill text-cyan fs-3" style="color: var(--accent);"></i>
+        </div>
+        <h2 class="fw-bold text-glow">My Profile Settings</h2>
+        <p class="text-muted">Keep your preferences updated for relevant recommendations</p>
+      </div>
+
+      <form action="/profile" method="POST" autocomplete="off">
+        <div class="mb-3">
+          <label for="name" class="form-label">Full Name</label>
+          <input type="text" class="form-control form-glass" id="name" name="name" value="<%= user.name %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email Address (Read-only)</label>
+          <input type="email" class="form-control form-glass" id="email" value="<%= user.email %>" disabled>
+        </div>
+
+
+        <div class="mb-4">
+          <label class="form-label d-block mb-2">My Interests (Category Affinity)</label>
+          <div class="d-flex flex-wrap gap-3">
+            <% const categories = ['Workshop', 'Hackathon', 'Seminar', 'Cultural', 'Sports']; %>
+            <% categories.forEach(cat => { %>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="interests" value="<%= cat %>" id="int-<%= cat %>"
+                  <%= user.interests && user.interests.includes(cat) ? 'checked' : '' %>>
+                <label class="form-check-label text-muted" for="int-<%= cat %>"><%= cat %></label>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-glow btn-glow-primary w-100 py-3 mb-3">
+          <i class="bi bi-save2-fill me-2"></i>Save Settings
+        </button>
+      </form>
+
+      <div class="text-center mt-4">
+        <a href="/dashboard" class="text-primary text-decoration-none">
+          <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

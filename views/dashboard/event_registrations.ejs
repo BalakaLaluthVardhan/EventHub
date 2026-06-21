@@ -1,0 +1,97 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center py-4">
+  <div class="col-12">
+    <div class="glass-panel p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <div>
+          <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase mb-2"><%= event.category %></span>
+          <h2 class="fw-bold mb-0 text-glow">Roster: <%= event.title %></h2>
+          <p class="text-muted mb-0 small">Manage attendees, update participation status, and export reports</p>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <a href="/dashboard/events/<%= event._id %>/export" class="btn btn-glow btn-glow-primary bg-success border-success text-white">
+            <i class="bi bi-file-earmark-excel-fill me-2"></i>Export to Excel
+          </a>
+          <a href="/dashboard" class="btn btn-glow btn-glow-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Dashboard</a>
+        </div>
+      </div>
+
+      <% if (registrations.length === 0) { %>
+        <div class="text-center py-5">
+          <i class="bi bi-people display-4 text-muted mb-3 d-block"></i>
+          <p class="text-muted mb-0">No registrations have been logged for this event yet.</p>
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-glass table-hover">
+            <thead>
+              <tr>
+                <th>Student Details</th>
+                <th>Academic Interests</th>
+                <th>Registration Date</th>
+                <th>Current Status</th>
+                <th>Mark Attendance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% registrations.forEach(reg => { %>
+                <% if (reg.user) { %>
+                  <tr>
+                    <td>
+                      <strong class="text-white d-block"><%= reg.user.name %></strong>
+                      <span class="text-muted small"><%= reg.user.email %></span>
+                    </td>
+                    <td>
+                      <% if (reg.user.interests && reg.user.interests.length) { %>
+                        <% reg.user.interests.forEach(int => { %>
+                          <span class="badge bg-dark border border-secondary small" style="font-size: 0.65rem;"><%= int %></span>
+                        <% }) %>
+                      <% } else { %>
+                        <span class="text-muted small">None</span>
+                      <% } %>
+                    </td>
+                    <td class="text-muted small"><%= new Date(reg.registeredAt).toLocaleString() %></td>
+                    <td>
+                      <% if (reg.status === 'registered') { %>
+                        <span class="badge bg-secondary-glow text-muted border border-secondary text-capitalize">Registered</span>
+                      <% } else if (reg.status === 'waitlisted') { %>
+                        <span class="badge bg-warning bg-opacity-20 text-warning border border-warning text-capitalize">Waitlisted</span>
+                      <% } else if (reg.status === 'attended') { %>
+                        <span class="badge badge-neon badge-neon-success text-capitalize">Attended</span>
+                      <% } else { %>
+                        <span class="badge badge-neon badge-neon-danger text-capitalize">Cancelled</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (reg.status !== 'cancelled' && reg.status !== 'waitlisted') { %>
+                        <form action="/events/attendance/<%= reg._id %>" method="POST" class="d-inline">
+                          <% if (reg.status === 'attended') { %>
+                            <input type="hidden" name="status" value="registered">
+                            <button type="submit" class="btn btn-sm btn-glow btn-glow-secondary py-1 px-2.5" style="font-size: 0.75rem;">
+                              <i class="bi bi-x-circle-fill text-danger me-1"></i>Revert Attendance
+                            </button>
+                          <% } else { %>
+                            <input type="hidden" name="status" value="attended">
+                            <button type="submit" class="btn btn-sm btn-glow btn-glow-primary py-1 px-2.5" style="font-size: 0.75rem;">
+                              <i class="bi bi-check-circle-fill me-1"></i>Mark Attended
+                            </button>
+                          <% } %>
+                        </form>
+                      <% } else { %>
+                        <span class="text-muted small">Not eligible</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

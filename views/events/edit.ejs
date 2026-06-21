@@ -1,0 +1,140 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center py-4">
+  <div class="col-lg-10">
+    <div class="glass-panel p-5">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <div>
+          <h2 class="fw-bold text-glow mb-1"><i class="bi bi-pencil-square me-2 text-primary"></i>Modify Event Details</h2>
+          <p class="text-muted mb-0">Update information for: <strong><%= event.title %></strong></p>
+        </div>
+        <a href="/events/<%= event._id %>" class="btn btn-glow btn-glow-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+      </div>
+
+      <form action="/events/<%= event._id %>?_method=PUT" method="POST" enctype="multipart/form-data" autocomplete="off">
+        
+        <div class="row g-4">
+          <!-- Left Column: Core details -->
+          <div class="col-md-6">
+            <h5 class="fw-bold text-glow mb-3 text-indigo-glow"><i class="bi bi-file-earmark-text me-2"></i>Event Information</h5>
+            
+            <div class="mb-3">
+              <label for="event-title" class="form-label">Event Title</label>
+              <input type="text" class="form-control form-glass" id="event-title" name="event[title]" value="<%= event.title %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-description" class="form-label">Description (Supports Markdown)</label>
+              <textarea class="form-control form-glass" id="event-description" name="event[description]" rows="8" required><%= event.description %></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-category" class="form-label">Category</label>
+                <select class="form-select form-glass" id="event-category" name="event[category]" required>
+                  <% ['Workshop', 'Hackathon', 'Seminar', 'Cultural', 'Sports'].forEach(cat => { %>
+                    <option value="<%= cat %>" <%= event.category === cat ? 'selected' : '' %>><%= cat %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="event-tags" class="form-label">Tags (Comma-separated)</label>
+                <input type="text" class="form-control form-glass" id="event-tags" name="event[tags]" value="<%= event.tags.join(', ') %>">
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-price" class="form-label">Entry Price (₹)</label>
+                <input type="number" class="form-control form-glass" id="event-price" name="event[price]" value="<%= event.price %>" min="0" required>
+              </div>
+              <div class="col-6">
+                <label for="event-capacity" class="form-label">Capacity (Limit)</label>
+                <input type="number" class="form-control form-glass" id="event-capacity" name="event[capacity]" value="<%= event.capacity %>" min="1" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-status" class="form-label">Event Status</label>
+              <select class="form-select form-glass border-primary" id="event-status" name="event[status]" required>
+                <option value="open" <%= event.status === 'open' ? 'selected' : '' %>>Open (Accepting Registrations)</option>
+                <option value="closed" <%= event.status === 'closed' ? 'selected' : '' %>>Closed (Registrations Closed)</option>
+                <option value="completed" <%= event.status === 'completed' ? 'selected' : '' %>>Completed (Post-Event Feedback Mode)</option>
+                <option value="cancelled" <%= event.status === 'cancelled' ? 'selected' : '' %>>Cancelled (Notifies Participants)</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-poster" class="form-label">Update Poster (Replaces current image)</label>
+              <input type="file" class="form-control form-glass" id="event-poster" name="poster">
+              <div class="form-text text-muted">Leave empty to keep existing poster. JPG, PNG, WEBP allowed.</div>
+            </div>
+          </div>
+
+          <!-- Right Column: Dates, venue and picker map -->
+          <div class="col-md-6">
+            <h5 class="fw-bold text-glow mb-3 text-indigo-glow"><i class="bi bi-geo-alt me-2"></i>Date & Logistics</h5>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-date" class="form-label">Event Date</label>
+                <% const formattedDateVal = event.date.toISOString().split('T')[0]; %>
+                <input type="date" class="form-control form-glass" id="event-date" name="event[date]" value="<%= formattedDateVal %>" required>
+              </div>
+              <div class="col-6">
+                <label for="event-time" class="form-label">Start Time</label>
+                <input type="text" class="form-control form-glass" id="event-time" name="event[time]" value="<%= event.time %>" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-venue" class="form-label">Venue Location Name</label>
+              <input type="text" class="form-control form-glass" id="event-venue" name="event[venue]" value="<%= event.venue %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-address" class="form-label">Physical Address (Geocoded automatically)</label>
+              <input type="text" class="form-control form-glass" id="event-address" name="event[address]" value="<%= event.address %>" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="event-lat" class="form-label">Latitude</label>
+                <input type="number" class="form-control form-glass" id="event-lat" name="event[lat]" step="any" value="<%= event.coordinates.lat %>" required>
+              </div>
+              <div class="col-6">
+                <label for="event-lng" class="form-label">Longitude</label>
+                <input type="number" class="form-control form-glass" id="event-lng" name="event[lng]" step="any" value="<%= event.coordinates.lng %>" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label d-block">Coordinate Picker (Drag marker or click map)</label>
+              <div id="map" 
+                   data-lat="<%= event.coordinates.lat %>" 
+                   data-lng="<%= event.coordinates.lng %>" 
+                   data-picker="true"
+                   data-token="<%= process.env.MAPBOX_TOKEN || '' %>">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-top border-secondary pt-4 mt-4 d-flex justify-content-between align-items-center">
+          <button type="submit" form="delete-form" class="btn btn-glow btn-outline-danger px-4 py-3 fs-5">
+            <i class="bi bi-trash3 me-2"></i>Delete Event
+          </button>
+          <button type="submit" class="btn btn-glow btn-glow-primary px-5 py-3 fs-5">
+            <i class="bi bi-save-fill me-2"></i>Save Event Changes
+          </button>
+        </div>
+
+      </form>
+
+      <!-- External form for event deletion to avoid nesting -->
+      <form id="delete-form" action="/events/<%= event._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this event? This cannot be undone.');"></form>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

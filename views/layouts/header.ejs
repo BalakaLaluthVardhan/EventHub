@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'College Event Hub' %></title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  
+  <!-- Leaflet Maps CSS (Free Map Fallback) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Mapbox GL JS CSS (If token provided) -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+  
+  <!-- Custom Core Design System Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Glassmorphic Sticky Header / Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light navbar-glass sticky-top mb-4">
+    <div class="container">
+      <a class="navbar-brand text-glow" href="/">
+        <i class="bi bi-mortarboard-fill me-2"></i>Campus Event Hub
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link <%= typeof title !== 'undefined' && title.includes('Discover') ? 'active' : '' %>" href="/events">
+              <i class="bi bi-search me-1"></i>Discover
+            </a>
+          </li>
+          <% if (currentUser) { %>
+            <li class="nav-item">
+              <a class="nav-link <%= typeof title !== 'undefined' && title.includes('Dashboard') ? 'active' : '' %>" href="/dashboard">
+                <i class="bi bi-grid-fill me-1"></i>Dashboard
+              </a>
+            </li>
+            <% if (currentUser.role === 'organizer' || currentUser.role === 'admin') { %>
+              <li class="nav-item">
+                <a class="nav-link <%= typeof title !== 'undefined' && title.includes('Create') ? 'active' : '' %>" href="/events/new">
+                  <i class="bi bi-plus-circle-fill me-1"></i>Host Event
+                </a>
+              </li>
+            <% } %>
+          <% } %>
+        </ul>
+        
+        <ul class="navbar-nav ms-auto align-items-center">
+          <% if (currentUser) { %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5"></i>
+                <span><%= currentUser.name %></span>
+                <span class="badge bg-secondary text-capitalize" style="font-size: 0.65rem;"><%= currentUser.role %></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item" href="/profile"><i class="bi bi-gear me-2"></i>My Profile</a></li>
+                <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                <li><hr class="dropdown-divider border-secondary"></li>
+                <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+              </ul>
+            </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link me-2" href="/login"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-glow btn-glow-primary px-3 py-2 text-white" href="/register">
+                <i class="bi bi-person-plus-fill me-1"></i>Get Started
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages & Overlay Alerts -->
+  <div class="container mt-2">
+    <% if (success && success.length) { %>
+      <div class="alert alert-success alert-dismissible fade show glass-panel border-success text-success d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+        <div><%= success %></div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+    
+    <% if (error && error.length) { %>
+      <div class="alert alert-danger alert-dismissible fade show glass-panel border-danger text-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+        <div><%= error %></div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if (info && info.length) { %>
+      <div class="alert alert-info alert-dismissible fade show glass-panel border-info text-info d-flex align-items-center" role="alert">
+        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+        <div><%= info %></div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+
+    <% if (warning && warning.length) { %>
+      <div class="alert alert-warning alert-dismissible fade show glass-panel border-warning text-warning d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+        <div><%= warning %></div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Primary View Wrapper -->
+  <main class="container mt-3">

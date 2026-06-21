@@ -1,0 +1,26 @@
+<%- include('layouts/header') %>
+
+<div class="row justify-content-center align-items-center py-5 min-vh-75">
+  <div class="col-md-8 col-lg-6">
+    <div class="glass-panel p-5 text-center border-danger">
+      <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-danger bg-opacity-10 border border-danger" style="width: 70px; height: 70px;">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+      </div>
+      
+      <h2 class="fw-bold text-glow text-danger mb-2">System Alert</h2>
+      <h4 class="text-white mb-4"><%= err.message %></h4>
+      
+      <% if (process.env.NODE_ENV !== 'production' && err.stack) { %>
+        <div class="text-start bg-dark bg-opacity-50 p-3 rounded border border-secondary mb-4 overflow-auto" style="max-height: 250px; font-family: monospace; font-size: 0.8rem; color: #f43f5e; white-space: pre-wrap;">
+          <%= err.stack %>
+        </div>
+      <% } %>
+
+      <a href="/" class="btn btn-glow btn-glow-primary px-4 py-2.5">
+        <i class="bi bi-house-door-fill me-2"></i>Return to Home
+      </a>
+    </div>
+  </div>
+</div>
+
+<%- include('layouts/footer') %>

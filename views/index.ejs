@@ -1,0 +1,71 @@
+<%- include('layouts/header') %>
+
+<div class="row align-items-center justify-content-center py-5 min-vh-75">
+  <div class="col-lg-8 text-center">
+    <span class="badge bg-indigo-glow text-primary mb-3 px-3 py-2 border border-primary-glow text-glow" style="background: rgba(99, 102, 241, 0.15); font-weight: 600;">
+      ✨ Welcome to the Future of Campus Life
+    </span>
+    
+    <h1 class="display-3 fw-extrabold mb-4 text-glow" style="background: linear-gradient(135deg, #fff 30%, #a5b4fc, #818cf8, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -2px;">
+      College Event Hub
+    </h1>
+    
+    <p class="lead text-muted mb-5 fs-4 px-lg-5">
+      An AI-powered campus event management platform. Discover workshops, register instantly, host coding hackathons, export schedules to your calendars, and connect with your college community in one centralized workspace.
+    </p>
+    
+    <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
+      <a href="/events" class="btn btn-glow btn-glow-primary btn-lg px-4 py-3 fs-5">
+        <i class="bi bi-compass me-2"></i>Explore Events
+      </a>
+      <% if (!currentUser) { %>
+        <a href="/register" class="btn btn-glow btn-glow-secondary btn-lg px-4 py-3 fs-5">
+          <i class="bi bi-person-plus me-2"></i>Register Now
+        </a>
+      <% } else { %>
+        <a href="/dashboard" class="btn btn-glow btn-glow-secondary btn-lg px-4 py-3 fs-5">
+          <i class="bi bi-speedometer2 me-2"></i>My Dashboard
+        </a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 justify-content-center py-5 border-top border-secondary">
+  <div class="col-12 text-center mb-4">
+    <h2 class="h1 fw-bold text-glow">🚀 Key System Features</h2>
+    <p class="text-muted">Designed to streamline campus communication and increase engagement</p>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="glass-panel p-4 h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-primary-glow border border-primary" style="width: 60px; height: 60px;">
+        <i class="bi bi-cpu text-primary fs-3"></i>
+      </div>
+      <h4 class="fw-bold">AI Helper Tools</h4>
+      <p class="text-muted mb-0">Generates structured descriptions from scratch, predicts category tags, and synthesizes attendee feedback reviews automatically.</p>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="glass-panel p-4 h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-secondary-glow border border-secondary" style="width: 60px; height: 60px;">
+        <i class="bi bi-magic text-secondary fs-3"></i>
+      </div>
+      <h4 class="fw-bold">Smart Recommendations</h4>
+      <p class="text-muted mb-0">Computes a custom content affinity score for every student based on registered categories, interests, and event popularity.</p>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="glass-panel p-4 h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-accent-glow border border-cyan" style="width: 60px; height: 60px; border-color: var(--accent) !important;">
+        <i class="bi bi-calendar-event text-cyan fs-3" style="color: var(--accent);"></i>
+      </div>
+      <h4 class="fw-bold">Calendar & Location Sync</h4>
+      <p class="text-muted mb-0">Export details straight to Google Calendar or (.ics) downloads. Tracks venues on interactive maps (Leaflet fallback ready).</p>
+    </div>
+  </div>
+</div>
+
+<%- include('layouts/footer') %>

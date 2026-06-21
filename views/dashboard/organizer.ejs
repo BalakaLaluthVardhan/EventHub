@@ -1,0 +1,214 @@
+<%- include('../layouts/header') %>
+
+<!-- Statistics Row -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="glass-panel stats-card">
+      <div class="stats-card-value text-glow"><%= totalEvents %></div>
+      <div class="stats-card-label">Events Organized</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="glass-panel stats-card">
+      <div class="stats-card-value text-glow"><%= totalRegistrationsCount %></div>
+      <div class="stats-card-label">Total Registered Attendees</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Analytics Chart: Registrations by Category -->
+  <div class="col-lg-6">
+    <div class="glass-panel p-4 h-100">
+      <h4 class="fw-bold mb-3 text-glow"><i class="bi bi-bar-chart-line text-primary me-2"></i>Registrations by Category</h4>
+      <div style="height: 300px; position: relative;">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Chart: Registration Ratios -->
+  <div class="col-lg-6">
+    <div class="glass-panel p-4 h-100">
+      <h4 class="fw-bold mb-3 text-glow"><i class="bi bi-pie-chart text-secondary me-2"></i>Category Distribution</h4>
+      <div style="height: 300px; position: relative;">
+        <canvas id="categoryPieChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event Management Panel -->
+<div class="row">
+  <div class="col-12">
+    <div class="glass-panel p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <h3 class="fw-bold mb-0 text-glow"><i class="bi bi-calendar-event text-primary me-2"></i>Manage Organized Events</h3>
+        <a href="/events/new" class="btn btn-glow btn-glow-primary">
+          <i class="bi bi-plus-circle me-2"></i>Create New Event
+        </a>
+      </div>
+
+      <% if (events.length === 0) { %>
+        <div class="text-center py-5">
+          <i class="bi bi-calendar-x display-4 text-muted mb-3 d-block"></i>
+          <p class="text-muted mb-0">You haven't hosted any events yet. Click "Create New Event" to launch your first campus activity!</p>
+        </div>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-glass table-hover">
+            <thead>
+              <tr>
+                <th>Event Details</th>
+                <th>Date / Time</th>
+                <th>Capacity / Regs</th>
+                <th>Waitlist</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% events.forEach(event => { %>
+                <tr>
+                  <td>
+                    <strong class="text-white d-block"><%= event.title %></strong>
+                    <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase" style="font-size: 0.65rem;"><%= event.category %></span>
+                    <% if (event.price > 0) { %>
+                      <span class="badge bg-opacity-20 text-cyan border border-cyan" style="font-size: 0.65rem; color: var(--accent); border-color: var(--accent) !important;">₹<%= event.price %></span>
+                    <% } else { %>
+                      <span class="badge bg-opacity-20 text-success border border-success" style="font-size: 0.65rem;">Free</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="d-block small"><%= new Date(event.date).toLocaleDateString() %></span>
+                    <span class="text-muted small"><%= event.time %></span>
+                  </td>
+                  <td>
+                    <strong class="text-white"><%= event.registrationCount %></strong>
+                    <span class="text-muted">/ <%= event.capacity %></span>
+                    <div class="progress mt-1" style="height: 5px;">
+                      <% const percentage = Math.min(100, (event.registrationCount / event.capacity) * 100); %>
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: <%= percentage %>%" aria-valuenow="<%= percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </td>
+                  <td class="text-muted small">
+                    <% if (event.waitlistedCount > 0) { %>
+                      <span class="badge bg-warning bg-opacity-20 text-warning border border-warning"><%= event.waitlistedCount %> Wait</span>
+                    <% } else { %>
+                      0
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (event.status === 'open') { %>
+                      <span class="badge badge-neon badge-neon-success">Open</span>
+                    <% } else if (event.status === 'closed') { %>
+                      <span class="badge bg-secondary text-muted">Closed</span>
+                    <% } else if (event.status === 'completed') { %>
+                      <span class="badge badge-neon badge-neon-info">Completed</span>
+                    <% } else { %>
+                      <span class="badge badge-neon badge-neon-danger">Cancelled</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="/events/<%= event._id %>" class="btn btn-sm btn-glow btn-glow-secondary" title="View details"><i class="bi bi-eye"></i></a>
+                      <a href="/dashboard/events/<%= event._id %>/registrations" class="btn btn-sm btn-glow btn-glow-primary" title="Manage Attendance Roster"><i class="bi bi-people-fill"></i></a>
+                      <a href="/dashboard/events/<%= event._id %>/export" class="btn btn-sm btn-glow btn-glow-secondary text-success" title="Export registrations to Excel"><i class="bi bi-file-earmark-excel-fill"></i></a>
+                      <a href="/events/<%= event._id %>/edit" class="btn btn-sm btn-glow btn-glow-secondary" title="Edit details"><i class="bi bi-pencil-square"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<!-- Pass data to Chart.js scripts -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoryData = <%- JSON.stringify(chartCategoryData) %>;
+    
+    // Bar Chart
+    const barCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(categoryData),
+        datasets: [{
+          label: 'Total Registrations',
+          data: Object.values(categoryData),
+          backgroundColor: [
+            'rgba(56, 102, 65, 0.7)',   // Forest Green
+            'rgba(106, 153, 78, 0.7)',  // Leaf Green
+            'rgba(72, 114, 138, 0.7)',  // Muted River Blue
+            'rgba(188, 71, 73, 0.7)',   // Terracotta
+            'rgba(242, 166, 90, 0.7)'   // Amber Sand
+          ],
+          borderColor: [
+            '#386641',
+            '#6a994e',
+            '#48728a',
+            '#bc4749',
+            '#f2a65a'
+          ],
+          borderWidth: 1.5,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+            ticks: { color: '#5c625a', font: { family: 'Outfit' } }
+          },
+          y: {
+            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+            ticks: { color: '#5c625a', font: { family: 'Outfit' }, stepSize: 1 }
+          }
+        }
+      }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+    new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(categoryData),
+        datasets: [{
+          data: Object.values(categoryData),
+          backgroundColor: [
+            '#386641',
+            '#6a994e',
+            '#48728a',
+            '#bc4749',
+            '#f2a65a'
+          ],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#5c625a', font: { family: 'Outfit', size: 12 } }
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<%- include('../layouts/footer') %>

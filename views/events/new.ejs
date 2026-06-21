@@ -1,0 +1,146 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center py-4">
+  <div class="col-lg-10">
+    <div class="glass-panel p-5">
+      <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <div>
+          <h2 class="fw-bold text-glow mb-1"><i class="bi bi-calendar-plus me-2 text-primary"></i>Host Campus Event</h2>
+          <p class="text-muted mb-0">Fill out details manually, or use our OpenRouter AI assistant to draft them</p>
+        </div>
+        <a href="/dashboard" class="btn btn-glow btn-glow-secondary"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+      </div>
+
+      <form action="/events" method="POST" enctype="multipart/form-data" autocomplete="off">
+        
+        <div class="row g-4">
+          <!-- Left Column: Core event details -->
+          <div class="col-md-6">
+            <h5 class="fw-bold text-glow mb-3 text-indigo-glow"><i class="bi bi-file-earmark-text me-2"></i>Event Information</h5>
+            
+            <div class="mb-3">
+              <label for="event-title" class="form-label">Event Title</label>
+              <input type="text" class="form-control form-glass" id="event-title" name="event[title]" placeholder="e.g. CodeStorm Hackathon 2026" required>
+            </div>
+
+            <!-- AI Helper: Description generator trigger -->
+            <div class="ai-helper-box mb-3">
+              <label for="event-notes" class="form-label d-flex align-items-center">
+                <i class="bi bi-robot text-primary me-1.5 fs-5"></i>AI Notes & Highlights
+              </label>
+              <textarea class="form-control form-glass mb-2" id="event-notes" rows="2" placeholder="e.g. 24 hour coding, 3 persons per team, prizes worth $1000, open to CSE/ECE."></textarea>
+              <button type="button" id="ai-generate-desc-btn" class="btn btn-sm btn-glow btn-glow-primary w-100 py-2">
+                <span id="ai-desc-loader" class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>
+                <span id="ai-desc-btn-text">Generate Description with AI</span>
+              </button>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-description" class="form-label">Description (Supports Markdown)</label>
+              <textarea class="form-control form-glass" id="event-description" name="event[description]" rows="8" placeholder="Draft your event details here..." required></textarea>
+            </div>
+
+            <!-- AI Helper: Categorization assistant trigger -->
+            <div class="ai-helper-box mb-3">
+              <button type="button" id="ai-suggest-category-btn" class="btn btn-sm btn-glow btn-glow-primary w-100 py-2">
+                <span id="ai-cat-loader" class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>
+                <span id="ai-cat-btn-text">Auto-Categorize & Tag (Based on Title & Desc)</span>
+              </button>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-category" class="form-label">Category</label>
+                <select class="form-select form-glass" id="event-category" name="event[category]" required>
+                  <option value="" disabled selected>Select Category</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Hackathon">Hackathon</option>
+                  <option value="Seminar">Seminar</option>
+                  <option value="Cultural">Cultural</option>
+                  <option value="Sports">Sports</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="event-tags" class="form-label">Tags (Comma-separated)</label>
+                <input type="text" class="form-control form-glass" id="event-tags" name="event[tags]" placeholder="coding, contest, tech">
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-price" class="form-label">Entry Price (₹)</label>
+                <input type="number" class="form-control form-glass" id="event-price" name="event[price]" value="0" min="0" required>
+              </div>
+              <div class="col-6">
+                <label for="event-capacity" class="form-label">Capacity (Limit)</label>
+                <input type="number" class="form-control form-glass" id="event-capacity" name="event[capacity]" value="50" min="1" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-poster" class="form-label">Event Poster</label>
+              <input type="file" class="form-control form-glass" id="event-poster" name="poster">
+              <div class="form-text text-muted">Supports JPG, PNG, WEBP. Max size 10MB.</div>
+            </div>
+          </div>
+
+          <!-- Right Column: Date, Location and Maps picker -->
+          <div class="col-md-6">
+            <h5 class="fw-bold text-glow mb-3 text-indigo-glow"><i class="bi bi-geo-alt me-2"></i>Date & Logistics</h5>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="event-date" class="form-label">Event Date</label>
+                <input type="date" class="form-control form-glass" id="event-date" name="event[date]" required>
+              </div>
+              <div class="col-6">
+                <label for="event-time" class="form-label">Start Time</label>
+                <input type="text" class="form-control form-glass" id="event-time" name="event[time]" placeholder="e.g. 10:00 AM or 14:00" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-venue" class="form-label">Venue Location Name</label>
+              <input type="text" class="form-control form-glass" id="event-venue" name="event[venue]" placeholder="e.g. Audi 2, Central Block" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-address" class="form-label">Physical Address (Geocoded automatically)</label>
+              <input type="text" class="form-control form-glass" id="event-address" name="event[address]" placeholder="e.g. IISc Bangalore, India or 100 Feet Rd, Indiranagar, Bengaluru" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="event-lat" class="form-label">Latitude</label>
+                <input type="number" class="form-control form-glass" id="event-lat" name="event[lat]" step="any" value="12.971599" required>
+              </div>
+              <div class="col-6">
+                <label for="event-lng" class="form-label">Longitude</label>
+                <input type="number" class="form-control form-glass" id="event-lng" name="event[lng]" step="any" value="77.594563" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label d-block">Coordinate Picker (Drag marker or click map)</label>
+              <div id="map" 
+                   data-lat="12.971599" 
+                   data-lng="77.594563" 
+                   data-picker="true"
+                   data-token="<%= process.env.MAPBOX_TOKEN || '' %>">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-top border-secondary pt-4 mt-4 text-end">
+          <button type="submit" class="btn btn-glow btn-glow-primary px-5 py-3 fs-5">
+            <i class="bi bi-calendar-check-fill me-2"></i>Publish Campus Event
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,13 @@
+<svg width="800" height="450" viewBox="0 0 800 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="450" fill="#0f172a"/>
+  <rect width="800" height="450" fill="url(#grad)" opacity="0.15"/>
+  <circle cx="400" cy="225" r="120" stroke="#6366f1" stroke-width="2" opacity="0.3" stroke-dasharray="10 5"/>
+  <path d="M400 175V275M350 225H450" stroke="#6366f1" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  <text x="400" y="320" fill="#94a3b8" font-size="18" font-family="system-ui, sans-serif" font-weight="600" text-anchor="middle">No Poster Uploaded</text>
+  <defs>
+    <radialGradient id="grad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" transform="translate(400 225) rotate(90) scale(225 400)">
+      <stop stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

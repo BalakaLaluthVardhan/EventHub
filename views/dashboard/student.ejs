@@ -1,0 +1,240 @@
+<%- include('../layouts/header') %>
+
+<div class="row g-4 py-4">
+  <!-- Sidebar Profile Card -->
+  <div class="col-lg-3">
+    <div class="glass-panel p-4 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-primary-glow border border-primary" style="width: 70px; height: 70px;">
+        <i class="bi bi-person-badge text-primary fs-2"></i>
+      </div>
+      <h4 class="fw-bold mb-0 text-glow"><%= currentUser.name %></h4>
+      <span class="badge bg-secondary-glow text-muted border border-secondary text-capitalize my-2 px-3 py-1.5"><%= currentUser.role %></span>
+      
+      <p class="text-muted small mt-2 mb-4">Interested in: <br>
+        <% if (currentUser.interests && currentUser.interests.length) { %>
+          <% currentUser.interests.forEach(int => { %>
+            <span class="badge bg-dark border border-secondary text-light mt-1"><%= int %></span>
+          <% }) %>
+        <% } else { %>
+          <span class="text-danger small">No interests added.</span>
+        <% } %>
+      </p>
+
+      <a href="/profile" class="btn btn-glow btn-glow-secondary w-100 py-2">
+        <i class="bi bi-gear-fill me-2"></i>Edit Interests
+      </a>
+    </div>
+  </div>
+
+  <!-- Primary Dashboard Feed -->
+  <div class="col-lg-9">
+    <div class="glass-panel p-4 mb-4">
+      <h3 class="fw-bold text-glow mb-4"><i class="bi bi-journal-check text-primary me-2"></i>My Registrations</h3>
+      
+      <!-- Navigation tabs inside dashboard -->
+      <ul class="nav nav-pills nav-pills-custom mb-3" id="studentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="active-tab" data-bs-toggle="pill" data-bs-target="#tab-active" type="button" role="tab" aria-controls="tab-active" aria-selected="true">
+            <i class="bi bi-ticket-detailed me-1"></i>Active (<%= registeredEvents.length %>)
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="waitlist-tab" data-bs-toggle="pill" data-bs-target="#tab-waitlist" type="button" role="tab" aria-controls="tab-waitlist" aria-selected="false">
+            <i class="bi bi-hourglass-split me-1"></i>Waitlist (<%= waitlistedEvents.length %>)
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="past-tab" data-bs-toggle="pill" data-bs-target="#tab-past" type="button" role="tab" aria-controls="tab-past" aria-selected="false">
+            <i class="bi bi-calendar-check me-1"></i>History (<%= pastEvents.length %>)
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="studentTabsContent">
+        <!-- Active registrations -->
+        <div class="tab-pane fade show active" id="tab-active" role="tabpanel" aria-labelledby="active-tab">
+          <% if (registeredEvents.length === 0) { %>
+            <p class="text-muted text-center py-4 bg-dark bg-opacity-25 rounded border border-secondary">You do not have any active event registrations. Explore the catalog to sign up!</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table table-glass table-hover">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date / Time</th>
+                    <th>Venue</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% registeredEvents.forEach(reg => { %>
+                    <% if (reg.event) { %>
+                      <tr>
+                        <td>
+                          <strong class="text-white d-block"><%= reg.event.title %></strong>
+                          <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase" style="font-size: 0.65rem;"><%= reg.event.category %></span>
+                        </td>
+                        <td>
+                          <span class="d-block small"><%= new Date(reg.event.date).toLocaleDateString() %></span>
+                          <span class="text-muted small"><%= reg.event.time %></span>
+                        </td>
+                        <td class="text-muted small"><%= reg.event.venue %></td>
+                        <td>
+                          <a href="/events/<%= reg.event._id %>" class="btn btn-sm btn-glow btn-glow-primary py-1 px-3 fs-6">View</a>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Waitlisted registrations -->
+        <div class="tab-pane fade" id="tab-waitlist" role="tabpanel" aria-labelledby="waitlist-tab">
+          <% if (waitlistedEvents.length === 0) { %>
+            <p class="text-muted text-center py-4 bg-dark bg-opacity-25 rounded border border-secondary">No waitlisted events currently.</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table table-glass table-hover">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Queue Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% waitlistedEvents.forEach(reg => { %>
+                    <% if (reg.event) { %>
+                      <tr>
+                        <td>
+                          <strong class="text-white d-block"><%= reg.event.title %></strong>
+                          <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase" style="font-size: 0.65rem;"><%= reg.event.category %></span>
+                        </td>
+                        <td class="text-muted small"><%= new Date(reg.registeredAt).toLocaleDateString() %></td>
+                        <td>
+                          <a href="/events/<%= reg.event._id %>" class="btn btn-sm btn-glow btn-glow-primary py-1 px-3 fs-6">View</a>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Past events history -->
+        <div class="tab-pane fade" id="tab-past" role="tabpanel" aria-labelledby="past-tab">
+          <% if (pastEvents.length === 0) { %>
+            <p class="text-muted text-center py-4 bg-dark bg-opacity-25 rounded border border-secondary">You haven't attended any completed events yet.</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table table-glass table-hover">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Attendance Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% pastEvents.forEach(reg => { %>
+                    <% if (reg.event) { %>
+                      <tr>
+                        <td>
+                          <strong class="text-white d-block"><%= reg.event.title %></strong>
+                          <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase" style="font-size: 0.65rem;"><%= reg.event.category %></span>
+                        </td>
+                        <td>
+                          <% if (reg.status === 'attended') { %>
+                            <span class="badge badge-neon badge-neon-success"><i class="bi bi-check-circle-fill me-1"></i>Attended</span>
+                          <% } else { %>
+                            <span class="badge bg-secondary text-muted"><i class="bi bi-x-circle me-1"></i>Absent</span>
+                          <% } %>
+                        </td>
+                        <td>
+                          <a href="/events/<%= reg.event._id %>" class="btn btn-sm btn-glow btn-glow-primary py-1 px-3 fs-6">
+                            <%= reg.status === 'attended' ? 'Write Review' : 'View' %>
+                          </a>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Event Recommendations -->
+    <div class="glass-panel p-4 mb-4">
+      <h3 class="fw-bold text-glow mb-1"><i class="bi bi-magic text-secondary me-2"></i>Personalized Recommendations</h3>
+      <p class="text-muted mb-4 small">AI-scored based on your profile interests, registration categories, and wishlist items</p>
+      
+      <% if (recommendations.length === 0) { %>
+        <p class="text-muted text-center py-3">No matching upcoming recommendations found. Update your profile interests to get tailored suggestions!</p>
+      <% } else { %>
+        <div class="row g-3">
+          <% recommendations.forEach(event => { %>
+            <div class="col-md-6">
+              <div class="bg-dark bg-opacity-50 p-3 rounded border border-secondary h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="fw-bold mb-0 text-glow fs-6"><%= event.title %></h5>
+                    <span class="badge bg-indigo-glow text-primary text-uppercase" style="font-size: 0.6rem; background: rgba(99,102,241,0.1);"><%= event.category %></span>
+                  </div>
+                  <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i><%= new Date(event.date).toLocaleDateString() %> &middot; <%= event.venue %></p>
+                </div>
+                <div class="text-end">
+                  <a href="/events/<%= event._id %>" class="btn btn-sm btn-glow btn-glow-primary py-1 px-2.5" style="font-size: 0.75rem;">Join Details</a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Wishlist bookmark items -->
+    <div class="glass-panel p-4">
+      <h3 class="fw-bold text-glow mb-3"><i class="bi bi-heart-fill text-danger me-2"></i>My Wishlist</h3>
+      
+      <% if (wishlist.length === 0) { %>
+        <p class="text-muted text-center py-4 bg-dark bg-opacity-25 rounded border border-secondary">Your wishlist is empty. Add events to save them here for quick access.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="table table-glass table-hover">
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% wishlist.forEach(event => { %>
+                <tr>
+                  <td>
+                    <strong class="text-white d-block"><%= event.title %></strong>
+                    <span class="badge bg-secondary-glow text-muted border border-secondary text-uppercase" style="font-size: 0.65rem;"><%= event.category %></span>
+                  </td>
+                  <td class="text-success"><%= event.price === 0 ? 'Free' : `₹${event.price}` %></td>
+                  <td>
+                    <a href="/events/<%= event._id %>" class="btn btn-sm btn-glow btn-glow-primary py-1 px-3 fs-6">Details</a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

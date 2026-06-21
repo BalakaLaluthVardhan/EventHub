@@ -1,0 +1,88 @@
+<%- include('../layouts/header') %>
+
+<div class="row justify-content-center align-items-center py-4">
+  <div class="col-md-8 col-lg-6">
+    <div class="glass-panel p-5">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center p-3 mb-3 rounded-circle bg-secondary-glow border border-secondary" style="width: 60px; height: 60px;">
+          <i class="bi bi-person-plus-fill text-secondary fs-3"></i>
+        </div>
+        <h2 class="fw-bold text-glow">Create Account</h2>
+        <p class="text-muted">Register to join your college community hub</p>
+      </div>
+
+      <form action="/register" method="POST" autocomplete="off">
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control form-glass" id="name" name="name" placeholder="John Doe" required>
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control form-glass" id="email" name="email" placeholder="john.doe@college.edu" required>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-12">
+            <label for="role" class="form-label">I am a...</label>
+            <select class="form-select form-glass" id="role" name="role" required>
+              <option value="student" selected>Student (Attends events)</option>
+              <option value="organizer">Organizer (Creates/hosts events)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-12">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control form-glass" id="password" name="password" placeholder="Min 6 chars" required minlength="6">
+          </div>
+        </div>
+
+        <!-- Interest selection for Recommendation engine -->
+        <div class="mb-4">
+          <label class="form-label d-block mb-2">My Interests (Helps personalize recommendations)</label>
+          <div class="d-flex flex-wrap gap-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="interests" value="Workshop" id="int-workshop">
+              <label class="form-check-label text-muted" for="int-workshop">Workshop</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="interests" value="Hackathon" id="int-hackathon">
+              <label class="form-check-label text-muted" for="int-hackathon">Hackathon</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="interests" value="Seminar" id="int-seminar">
+              <label class="form-check-label text-muted" for="int-seminar">Seminar</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="interests" value="Cultural" id="int-cultural">
+              <label class="form-check-label text-muted" for="int-cultural">Cultural</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="interests" value="Sports" id="int-sports">
+              <label class="form-check-label text-muted" for="int-sports">Sports</label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-glow btn-glow-primary w-100 py-3 mb-3">
+          <i class="bi bi-check-circle-fill me-2"></i>Create Account
+        </button>
+        
+        <div class="text-center my-3 text-muted">or</div>
+
+        <a href="/auth/google" class="btn btn-glass-social btn-google w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+          <i class="bi bi-google"></i> Continue with Google
+        </a>
+      </form>
+
+      <div class="text-center mt-4">
+        <p class="text-muted mb-0">Already have an account? <a href="/login" class="text-primary text-decoration-none">Sign In here</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

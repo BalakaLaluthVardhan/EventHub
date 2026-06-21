@@ -1,0 +1,170 @@
+<%- include('../layouts/header') %>
+
+<div class="row g-4 mb-5">
+  <!-- Left Side: Filter Form -->
+  <div class="col-lg-3">
+    <div class="glass-panel p-4 sticky-top" style="top: 95px; z-index: 10;">
+      <h4 class="fw-bold mb-3 text-glow"><i class="bi bi-filter-left me-2"></i>Filter Events</h4>
+      <form action="/events" method="GET" autocomplete="off">
+        
+        <!-- Search -->
+        <div class="mb-3">
+          <label for="search" class="form-label">Search Keywords</label>
+          <div class="input-group">
+            <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control form-glass" id="search" name="search" placeholder="Title, venue, club..." value="<%= filters.search || '' %>">
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+          <label for="category" class="form-label">Category</label>
+          <select class="form-select form-glass" id="category" name="category">
+            <option value="All">All Categories</option>
+            <% ['Workshop', 'Hackathon', 'Seminar', 'Cultural', 'Sports'].forEach(cat => { %>
+              <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>><%= cat %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- Date Range -->
+        <div class="mb-3">
+          <label for="dateRange" class="form-label">Date Range</label>
+          <select class="form-select form-glass" id="dateRange" name="dateRange">
+            <option value="upcoming" <%= filters.dateRange === 'upcoming' || !filters.dateRange ? 'selected' : '' %>>Upcoming Events</option>
+            <option value="week" <%= filters.dateRange === 'week' ? 'selected' : '' %>>This Week</option>
+            <option value="month" <%= filters.dateRange === 'month' ? 'selected' : '' %>>This Month</option>
+            <option value="past" <%= filters.dateRange === 'past' ? 'selected' : '' %>>Past Events</option>
+          </select>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-3">
+          <label for="price" class="form-label">Price Status</label>
+          <select class="form-select form-glass" id="price" name="price">
+            <option value="" <%= !filters.price ? 'selected' : '' %>>All Prices</option>
+            <option value="free" <%= filters.price === 'free' ? 'selected' : '' %>>Free Entrance</option>
+            <option value="paid" <%= filters.price === 'paid' ? 'selected' : '' %>>Paid Entries</option>
+          </select>
+        </div>
+
+        <!-- Registration Status -->
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <select class="form-select form-glass" id="status" name="status">
+            <option value="All" <%= filters.status === 'All' || !filters.status ? 'selected' : '' %>>All Statuses</option>
+            <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>>Open Registrations</option>
+            <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>>Closed Registrations</option>
+          </select>
+        </div>
+
+        <!-- Sorting -->
+        <div class="mb-4">
+          <label for="sort" class="form-label">Sort By</label>
+          <select class="form-select form-glass" id="sort" name="sort">
+            <option value="date" <%= filters.sort === 'date' || !filters.sort ? 'selected' : '' %>>Date: Near to Far</option>
+            <option value="popularity" <%= filters.sort === 'popularity' ? 'selected' : '' %>>Popularity (Registrations)</option>
+            <option value="date-desc" <%= filters.sort === 'date-desc' ? 'selected' : '' %>>Date: Newest First</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-glow btn-glow-primary w-100 py-2.5">
+          <i class="bi bi-funnel-fill me-2"></i>Apply Filters
+        </button>
+        <a href="/events" class="btn btn-glow btn-glow-secondary w-100 py-2.5 mt-2">
+          <i class="bi bi-x-circle-fill me-2"></i>Reset
+        </a>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Side: Event list -->
+  <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0 text-glow">🎯 Campus Event Discovery</h2>
+      <span class="text-muted"><%= events.length %> matches found</span>
+    </div>
+
+    <% if (events.length === 0) { %>
+      <div class="glass-panel text-center py-5 px-4 mt-2">
+        <i class="bi bi-emoji-frown text-muted display-4 mb-3"></i>
+        <h4 class="fw-bold">No Events Found</h4>
+        <p class="text-muted mb-0">Try clearing filters or search terms to discover active campus events.</p>
+      </div>
+    <% } else { %>
+      <div class="row g-4">
+        <% events.forEach(event => { %>
+          <div class="col-md-6">
+            <div class="glass-panel event-card">
+              
+              <!-- Image Poster -->
+              <div class="event-card-img-container">
+                <span class="event-card-category cat-<%= event.category %>">
+                  <%= event.category %>
+                </span>
+                <% if (event.poster && event.poster !== '/images/default-poster.svg') { %>
+                  <img src="<%= event.poster %>" class="event-card-img" alt="<%= event.title %> poster">
+                <% } else { %>
+                  <!-- Premium gradient SVG fallback -->
+                  <svg class="event-card-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="grad-<%= event._id %>" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:<%= event.category === 'Workshop' ? '#6366f1' : event.category === 'Hackathon' ? '#10b981' : event.category === 'Seminar' ? '#3b82f6' : event.category === 'Cultural' ? '#ec4899' : '#f59e0b' %>;stop-opacity:0.3" />
+                      </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grad-<%= event._id %>)" />
+                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-size="1.2rem" font-family="'Outfit', sans-serif" font-weight="700">
+                      <%= event.category %>
+                    </text>
+                  </svg>
+                <% } %>
+              </div>
+
+              <!-- Card content -->
+              <div class="event-card-body">
+                <h3 class="event-card-title text-glow"><%= event.title %></h3>
+                
+                <div class="event-card-meta">
+                  <i class="bi bi-calendar3 text-primary"></i>
+                  <span><%= event.formattedDate %></span>
+                </div>
+                <div class="event-card-meta">
+                  <i class="bi bi-clock text-primary"></i>
+                  <span><%= event.time %></span>
+                </div>
+                <div class="event-card-meta">
+                  <i class="bi bi-geo-alt text-primary"></i>
+                  <span><%= event.venue %></span>
+                </div>
+
+                <p class="text-muted mt-2 mb-4 text-truncate" style="font-size: 0.9rem;">
+                  <%= event.summary || event.description.substring(0, 100) %>
+                </p>
+
+                <!-- Footer row inside card -->
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-secondary">
+                  <span class="event-card-price <%= event.price > 0 ? 'paid' : '' %>">
+                    <%= event.price === 0 ? 'FREE' : `₹${event.price}` %>
+                  </span>
+                  
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-secondary-glow text-muted border border-secondary" style="font-size: 0.7rem;">
+                      <i class="bi bi-people me-1"></i><%= event.registrationCount %>/<%= event.capacity %>
+                    </span>
+                    <a href="/events/<%= event._id %>" class="btn btn-glow btn-glow-primary py-1 px-3 fs-6">
+                      View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>
