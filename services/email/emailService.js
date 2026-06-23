@@ -4,9 +4,11 @@ let transporter = null;
 
 // Initialize transporter if SMTP configuration is provided
 if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  const port = parseInt(process.env.SMTP_PORT || '2525', 10);
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.mailtrap.io',
-    port: parseInt(process.env.SMTP_PORT || '2525', 10),
+    port: port,
+    secure: port === 465, // Use SSL/TLS for port 465, false for STARTTLS on other ports
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
