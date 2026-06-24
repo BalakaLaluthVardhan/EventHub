@@ -28,7 +28,7 @@
     <!-- Event Description -->
     <div class="glass-panel p-4 mb-4">
       <h3 class="fw-bold text-glow mb-3">Event Details</h3>
-      <div class="text-muted leading-relaxed" style="white-space: pre-wrap; font-size: 1rem;"><%- event.description %></div>
+      <div class="text-muted leading-relaxed markdown-body" style="font-size: 1rem;"><%- parseMarkdown(event.description) %></div>
     </div>
   </div>
 

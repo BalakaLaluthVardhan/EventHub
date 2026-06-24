@@ -139,7 +139,7 @@
                 </div>
 
                 <p class="text-muted mt-2 mb-4 text-truncate" style="font-size: 0.9rem;">
-                  <%= event.summary || event.description.substring(0, 100) %>
+                  <%= event.summary || stripMarkdown(event.description).substring(0, 100) %>
                 </p>
 
                 <!-- Footer row inside card -->

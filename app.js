@@ -35,6 +35,25 @@ mongoose.connect(MONGODB_URI)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+const { marked } = require('marked');
+marked.setOptions({
+  gfm: true,
+  breaks: true
+});
+app.locals.parseMarkdown = (text) => {
+  if (!text) return '';
+  return marked.parse(text);
+};
+
+app.locals.stripMarkdown = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/[#*`_\-]/g, '') // Remove markdown symbols
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links [text](url) to just text
+    .replace(/\s+/g, ' ') // Collapse multiple spaces
+    .trim();
+};
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
