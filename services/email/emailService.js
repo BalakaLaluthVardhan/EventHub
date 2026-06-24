@@ -2,8 +2,46 @@ const nodemailer = require('nodemailer');
 
 let transporter = null;
 
-// Initialize transporter if SMTP configuration is provided
-if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+// Initialize transporter: Use Resend HTTP transport if API key is provided,
+// otherwise fall back to standard SMTP if SMTP credentials are provided.
+if (process.env.RESEND_API_KEY) {
+  const resendTransport = {
+    name: 'resend',
+    version: '1.0.0',
+    send: async (mail, callback) => {
+      try {
+        const { from, to, subject, html, text } = mail.data;
+        const recipient = Array.isArray(to) ? to.join(', ') : to;
+        const sender = from || process.env.FROM_EMAIL || 'onboarding@resend.dev';
+
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: sender,
+            to: recipient,
+            subject,
+            html,
+            text
+          })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          callback(null, { messageId: data.id });
+        } else {
+          callback(new Error(data.message || 'Resend API Error'));
+        }
+      } catch (err) {
+        callback(err);
+      }
+    }
+  };
+  transporter = nodemailer.createTransport(resendTransport);
+} else if (process.env.SMTP_USER && process.env.SMTP_PASS) {
   const port = parseInt(process.env.SMTP_PORT || '2525', 10);
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.mailtrap.io',
@@ -20,7 +58,7 @@ if (process.env.SMTP_USER && process.env.SMTP_PASS) {
  * Generic email sender helper
  */
 async function sendMail({ to, subject, html }) {
-  const from = process.env.FROM_EMAIL || 'noreply@collegeeventhub.edu';
+  const from = process.env.FROM_EMAIL || (process.env.RESEND_API_KEY ? 'onboarding@resend.dev' : 'noreply@collegeeventhub.edu');
 
   if (transporter) {
     try {
