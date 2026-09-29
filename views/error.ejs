@@ -8,10 +8,21 @@
       </div>
       
       <h2 class="fw-bold text-glow text-danger mb-2">System Alert</h2>
-      <h4 class="text-white mb-4"><%= err.message %></h4>
+      <h5 class="fw-semibold mb-4" style="color: var(--text-main); line-height: 1.6;"><%= err.message %></h5>
       
+      <% if (typeof isDbTimeout !== 'undefined' && isDbTimeout) { %>
+        <div class="text-start alert alert-warning mb-4 p-3 rounded" style="background: rgba(242, 166, 90, 0.15); border: 1px solid var(--warning); color: var(--text-main); font-size: 0.9rem;">
+          <div class="fw-bold mb-2 text-warning"><i class="bi bi-gear-fill me-1"></i> Quick Fix for Render / MongoDB Atlas:</div>
+          <ol class="mb-0 ps-3">
+            <li class="mb-1"><strong>MongoDB Atlas &rarr; Network Access:</strong> Make sure <code>0.0.0.0/0</code> (Allow Access from Anywhere) is added to your IP Access List.</li>
+            <li class="mb-1"><strong>Render Dashboard &rarr; Environment:</strong> Ensure <code>MONGODB_URI</code> is added with your MongoDB Atlas connection string.</li>
+            <li><strong>Check Database Credentials:</strong> Verify your username, password (special characters must be URL-encoded), and ensure the database cluster is active.</li>
+          </ol>
+        </div>
+      <% } %>
+
       <% if (process.env.NODE_ENV !== 'production' && err.stack) { %>
-        <div class="text-start bg-dark bg-opacity-50 p-3 rounded border border-secondary mb-4 overflow-auto" style="max-height: 250px; font-family: monospace; font-size: 0.8rem; color: #f43f5e; white-space: pre-wrap;">
+        <div class="text-start bg-dark bg-opacity-75 p-3 rounded border border-secondary mb-4 overflow-auto" style="max-height: 250px; font-family: monospace; font-size: 0.8rem; color: #f43f5e; white-space: pre-wrap;">
           <%= err.stack %>
         </div>
       <% } %>
