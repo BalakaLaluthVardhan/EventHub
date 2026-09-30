@@ -463,13 +463,7 @@ Contributions to College Event Hub are welcome! To contribute:
 
 **Laluth Vardhan Balaka**  
 *B.Tech Computer Science and Engineering*  
-Full-Stack Developer & Problem Solver  
 
 - **GitHub**: [@BalakaLaluthVardhan](https://github.com/BalakaLaluthVardhan)
 - **Repository**: [https://github.com/BalakaLaluthVardhan/EventHub](https://github.com/BalakaLaluthVardhan/EventHub)
 
----
-
-<div align="center">
-  <sub>Built with ❤️ to foster vibrant campus communities and seamless event management.</sub>
-</div>
